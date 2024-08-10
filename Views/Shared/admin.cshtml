@@ -30,7 +30,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("SachAll","Sach")">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index","Home")">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -69,18 +69,18 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Sản phẩm
+                Các loại Resort
             </div>
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="@Url.Action("List_Sach","Admin")">
                     <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Sách</span>
+                    <span>Resort</span>
                 </a>
             </li>
 
             <!-- Nav Item - Tables -->
-            <!--<li class="nav-item">
+       @*Lưu ý xem lại cái này*@     <!--<li class="nav-item">
                 <a class="nav-link" href="tables.html">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Tables</span>
@@ -95,9 +95,9 @@
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("List_DM","Admin")">Danh mục</a>
-                        <a class="collapse-item" href="@Url.Action("List_NXB","Admin")">Nhà xuất bản</a>
-                        <a class="collapse-item" href="@Url.Action("List_TacGia","Admin")">Tác giả</a>
+                        <a class="collapse-item" href="@Url.Action("List_DM","Admin")">Danh mục resort</a>
+                        <a class="collapse-item" href="@Url.Action("List_NXB","Admin")">Giá cả</a>
+                       @* <a class="collapse-item" href="@Url.Action("List_TacGia","Admin")">Dia chi</a>*@
                     </div>
                 </div>
             </li>
@@ -157,7 +157,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                             @*Luu ý*@   <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
                                 <img class="img-profile rounded-circle"
                                      src="img/undraw_profile.svg">
                             </a>
@@ -199,7 +199,7 @@
                 <footer class="sticky-footer bg-white">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto">
-                            <span style="font-size:larger;font:oblique">Copyright &copy; MAGICAL CORNER </span>
+                            <span style="font-size:larger;font:oblique">Copyright &copy; Quản Lý resort</span>
                         </div>
                     </div>
                 </footer>

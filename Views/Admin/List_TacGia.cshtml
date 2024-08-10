@@ -6,7 +6,7 @@
 
 <h1 class="h3 mb-2 text-gray-800">Danh sách Tác giả</h1>
 <p class="mb-4">
-    @Html.ActionLink("Create New", "")
+    @Html.ActionLink("Thêm tác giả mới", "Create_TacGia")
 </p>
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -37,9 +37,9 @@
                             <td>@Html.DisplayFor(modelItem => item.TieuSu)</td>
                             <td>@Html.DisplayFor(modelItem => item.DiaChi)</td>
                             <td>
-                                <button onclick="window.location.href='@Url.Action("", new { id = item.MaTG })'">Edit</button>
-                                <button onclick="window.location.href='@Url.Action("", new { id = item.MaTG })'">Details</button>
-                                <button onclick="if(confirm('Bạn có chắc chắn muốn xóa không?')) { window.location.href='@Url.Action("", new { id = item.MaTG })' }">Xóa</button>
+                                <button onclick="window.location.href='@Url.Action("Edit_TacGia", new { id = item.MaTG })'">Edit</button>
+                                <button onclick="window.location.href='@Url.Action("Detail_TacGia", new { id = item.MaTG })'">Details</button>
+                                <button onclick="if(confirm('Bạn có chắc chắn muốn xóa không?')) { window.location.href='@Url.Action("Delete_TacGia", new { id = item.MaTG })' }">Xóa</button>
                             </td>
                         </tr>
 

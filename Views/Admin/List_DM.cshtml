@@ -31,9 +31,9 @@
                             <td>@Html.DisplayFor(modelItem => item.MaDM)</td>
                             <td>@Html.DisplayFor(modelItem => item.TenDM)</td>
                             <td>
-                                <button onclick="window.location.href='@Url.Action("", new { id = item.MaDM })'">Edit</button>
-                                <button onclick="window.location.href='@Url.Action("", new { id = item.MaDM })'">Details</button>
-                                <button onclick="if(confirm('Bạn có chắc chắn muốn xóa không?')) { window.location.href='@Url.Action("", new { id = item.MaDM })' }">Xóa</button>
+                                <button onclick="window.location.href='@Url.Action("Edit_DM", new { id = item.MaDM })'">Edit</button>
+                                <button onclick="window.location.href='@Url.Action("Detail_DM", new { id = item.MaDM })'">Details</button>
+                                <button onclick="if(confirm('Bạn có chắc chắn muốn xóa không?')) { window.location.href='@Url.Action("Delete_DM", new { id = item.MaDM })' }">Xóa</button>
                             </td>
                         </tr>
 

@@ -1,0 +1,25 @@
+﻿@model QuanLyBanSach.Models.DanhMuc
+
+@{
+    ViewBag.Title = "Detail_DM";
+    Layout = "~/Views/Shared/admin.cshtml";
+}
+
+<h1 class="h3 mb-2 text-gray-800">Chi tiết Danh mục</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Thông tin chi tiết</h6>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-4">Mã Danh mục</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.MaDM)</dd>
+            <dt class="col-sm-4">Tên Danh mục</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.TenDM)</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        @Html.ActionLink("Quay lại", "List_DM", null, new { @class = "btn btn-secondary" })
+    </div>
+</div>

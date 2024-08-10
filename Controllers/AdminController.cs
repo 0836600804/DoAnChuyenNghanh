@@ -37,19 +37,24 @@ namespace QuanLyBanSach.Controllers
         public ActionResult Delete_Sach(int id)
         {
             // Tìm tất cả các chi tiết tác giả liên quan đến sách
-            var authorDetails = db.ChiTietTacGias.Where(s => s.MaSach == id).ToList();
-            var bookToDelete = db.Saches.FirstOrDefault(s => s.MaSach == id);
+            var donhang = db.ChiTietDonHangs.Where(s => s.MaSach == id).ToList();
+            var authorDetails = db.ChiTietTacGias.Where(s => s.MaSach == id).ToList();  // Xóa các tác giả có khỏa ngoại liên quan tới sách đã chọn
+            var bookToDelete = db.Saches.FirstOrDefault(s => s.MaSach == id); // Xóa 1 sách được chọn 
             if (bookToDelete != null)
             {
-                // Xóa tất cả các chi tiết tác giả liên quan
-                foreach (var authorDetail in authorDetails)
+                foreach(var dh in donhang)
                 {
-                    db.ChiTietTacGias.DeleteOnSubmit(authorDetail);
+                    db.ChiTietDonHangs.DeleteOnSubmit(dh);
+                }
+                // Xóa tất cả các chi tiết tác giả liên quan
+                foreach (var x in authorDetails) // chon x(bien hinh thuc) trong list tac gia
+                {
+                    db.ChiTietTacGias.DeleteOnSubmit(x);
                 }
                 // Xóa sách
-                db.Saches.DeleteOnSubmit(bookToDelete);
+                db.Saches.DeleteOnSubmit(bookToDelete);//Linq - DeleteOnSubmit EF-Remove
                 // Lưu thay đổi vào cơ sở dữ liệu
-                db.SubmitChanges();
+                db.SubmitChanges(); // SaveChange();
                 return RedirectToAction("List_Sach"); // Chuyển hướng đến action SachList sau khi xóa thành công
             }
             else
@@ -59,52 +64,86 @@ namespace QuanLyBanSach.Controllers
         }
         public ActionResult Create_Sach()
         {
-            var viewModel = new SachModel
-            {
-                DanhMucs = db.DanhMucs.ToList(),
-                NhaXuatBans = db.NhaXuatBans.ToList(),
-                NgayCapNhat = DateTime.Now
-            };
-            return View(viewModel);
+            ViewBag.DanhMucList = new SelectList(db.DanhMucs, "MaDM", "TenDM");
+            ViewBag.NhaXuatBanList = new SelectList(db.NhaXuatBans, "MaNXB", "TenNXB");
+            return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create_Sach(SachModel model)
+        public ActionResult Create_Sach([Bind(Include = "MaSach, MaDM, MaNXB, TenSach, DoiTuong, Kho, SoTrang, TrongLuong, DinhDang, GiaBan, MoTa, NgayCapNhat, AnhBia, SLTon")] Sach sach, HttpPostedFileBase AnhBiaFile)
         {
             if (ModelState.IsValid)
             {
-                string fileName = null;
-                if (model.AnhBia != null && model.AnhBia.ContentLength > 0)
+                // Lưu ảnh bìa vào thư mục trong project
+                if (AnhBiaFile != null && AnhBiaFile.ContentLength > 0)
                 {
-                    // Lưu file ảnh vào thư mục /Content/Images/
-                    fileName = Path.GetFileName(model.AnhBia.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Content/images/sach/"), fileName);
-                    model.AnhBia.SaveAs(path);
+                    var fileName = Path.GetFileName(AnhBiaFile.FileName);
+                    var path = Path.Combine(Server.MapPath("~/Content/images/sach/"), fileName);
+                    AnhBiaFile.SaveAs(path);
+                    sach.AnhBia = fileName; // Lưu tên ảnh vào trường AnhBia trong database
                 }
 
-                Sach sach = new Sach
-                {
-                    MaDM = model.MaDM,
-                    MaNXB = model.MaNXB,
-                    TenSach = model.TenSach,
-                    DoiTuong = model.DoiTuong,
-                    Kho = model.Kho,
-                    SoTrang = model.SoTrang,
-                    TrongLuong = model.TrongLuong,
-                    DinhDang = model.DinhDang,
-                    GiaBan = model.GiaBan,
-                    MoTa = model.MoTa,
-                    NgayCapNhat = model.NgayCapNhat,
-                    AnhBia = fileName,
-                    SLTon = model.SLTon
-                };
+                sach.NgayCapNhat = DateTime.Now; // Cập nhật thời gian hiện tại cho NgayCapNhat
                 db.Saches.InsertOnSubmit(sach);
                 db.SubmitChanges();
                 return RedirectToAction("List_Sach");
             }
-            model.DanhMucs = db.DanhMucs.ToList();
-            model.NhaXuatBans = db.NhaXuatBans.ToList();
-            return View(model);
+
+            // Nếu ModelState không hợp lệ, ta cần set lại SelectList cho dropdownlist ở view
+            ViewBag.DanhMucList = new SelectList(db.DanhMucs, "MaDM", "TenDM");
+            ViewBag.NhaXuatBanList = new SelectList(db.NhaXuatBans, "MaNXB", "TenNXB");
+            return View(sach);
+        }
+        public ActionResult Edit_Sach(int id)
+        {
+            ViewBag.DanhMucList = new SelectList(db.DanhMucs, "MaDM", "TenDM");
+            ViewBag.NhaXuatBanList = new SelectList(db.NhaXuatBans, "MaNXB", "TenNXB");
+            var sach = db.Saches.SingleOrDefault(p => p.MaSach == id);
+            if (sach == null)
+            {
+                return HttpNotFound();
+            }
+            return View(sach);
+        }
+
+        // POST: TacGia/Edit_TacGia/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit_Sach([Bind(Include = "MaSach, MaDM, MaNXB, TenSach, DoiTuong, Kho, SoTrang, TrongLuong, DinhDang, GiaBan, MoTa, NgayCapNhat, AnhBia, SLTon")] Sach sach, HttpPostedFileBase AnhBiaFile)
+        {
+            if (ModelState.IsValid)
+            {
+                var sachInDb = db.Saches.SingleOrDefault(p => p.MaSach == sach.MaSach);
+                if (sachInDb != null)
+                {
+                    sachInDb.MaDM = sach.MaDM;
+                    sachInDb.MaNXB = sach.MaNXB;
+                    sachInDb.TenSach = sach.TenSach;
+                    sachInDb.DoiTuong = sach.DoiTuong;
+                    sachInDb.Kho = sach.Kho;
+                    sachInDb.SoTrang = sach.SoTrang;
+                    sachInDb.TrongLuong = sach.TrongLuong;
+                    sachInDb.DinhDang = sach.DinhDang;
+                    sachInDb.GiaBan = sach.GiaBan;
+                    sachInDb.MoTa = sach.MoTa;
+                    sachInDb.SLTon = sach.SLTon;
+                    if (AnhBiaFile != null && AnhBiaFile.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(AnhBiaFile.FileName);
+                        var path = Path.Combine(Server.MapPath("~/Content/images/sach/"), fileName);
+                        AnhBiaFile.SaveAs(path);
+                        sachInDb.AnhBia = fileName; // Lưu tên ảnh vào trường AnhBia trong database
+                    }
+
+                    sachInDb.NgayCapNhat = DateTime.Now; // Cập nhật thời gian hiện tại cho NgayCapNhat
+                    db.SubmitChanges();
+                    return RedirectToAction("List_Sach");
+                }
+            }
+            ViewBag.DanhMucList = new SelectList(db.DanhMucs, "MaDM", "TenDM");
+            ViewBag.NhaXuatBanList = new SelectList(db.NhaXuatBans, "MaNXB", "TenNXB");
+            return View(sach);
         }
         //---------------------------Tác giả-----------------------------------------
         public ActionResult List_TacGia()
@@ -112,70 +151,283 @@ namespace QuanLyBanSach.Controllers
             var listt = db.TacGias.ToList();
             return View(listt);
         }
+        public ActionResult Detail_TacGia(int id)
+        {
+            var tacgia = db.TacGias.SingleOrDefault(p => p.MaTG == id);
+            if (tacgia == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tacgia);
+        }
+        public ActionResult Create_TacGia()
+        {
+            return View();
+        }
+        // POST: TacGia/Create_TacGia
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create_TacGia([Bind(Include = "MaTG, TenTG, DienThoai, TieuSu, DiaChi")] TacGia tacgia)
+        {
+            if (ModelState.IsValid)
+            {
+                db.TacGias.InsertOnSubmit(tacgia);
+                db.SubmitChanges();
+                return RedirectToAction("List_TacGia");
+            }
 
+            return View(tacgia);
+        }
+
+        // GET: TacGia/Edit_TacGia/5
+        public ActionResult Edit_TacGia(int id)
+        {
+            var tacgia = db.TacGias.SingleOrDefault(p => p.MaTG == id);
+            if (tacgia == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tacgia);
+        }
+
+        // POST: TacGia/Edit_TacGia/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit_TacGia([Bind(Include = "MaTG, TenTG, DienThoai, TieuSu, DiaChi")] TacGia tacgia)
+        {
+            if (ModelState.IsValid)
+            {
+                var tacgiaInDb = db.TacGias.SingleOrDefault(p => p.MaTG == tacgia.MaTG);
+                if (tacgiaInDb != null)
+                {
+                    tacgiaInDb.TenTG = tacgia.TenTG;
+                    tacgiaInDb.DienThoai = tacgia.DienThoai;
+                    tacgiaInDb.TieuSu = tacgia.TieuSu;
+                    tacgiaInDb.DiaChi = tacgia.DiaChi;
+                    db.SubmitChanges();
+                    return RedirectToAction("List_TacGia");
+                }
+            }
+            return View(tacgia);
+        }
+
+        // GET: TacGia/Delete_TacGia/5
+        public ActionResult Delete_TacGia(int id)
+        {
+            // Tìm tất cả các chi tiết sách liên quan đến tác giả
+            var bookDetails = db.ChiTietTacGias.Where(ct => ct.MaTG == id).ToList();
+            var authorToDelete = db.TacGias.FirstOrDefault(tg => tg.MaTG == id);
+            if (authorToDelete != null)
+            {
+                // Xóa tất cả các chi tiết sách liên quan
+                foreach (var bookDetail in bookDetails)
+                {
+                    db.ChiTietTacGias.DeleteOnSubmit(bookDetail);
+                }
+                // Xóa tác giả
+                db.TacGias.DeleteOnSubmit(authorToDelete);
+                // Lưu thay đổi vào cơ sở dữ liệu
+                db.SubmitChanges();
+                return RedirectToAction("List_TacGia"); // Chuyển hướng đến action List_TacGia sau khi xóa thành công
+            }
+            else
+            {
+                return HttpNotFound(); // Trả về lỗi 404 Not Found nếu không tìm thấy tác giả để xóa
+            }
+        }
         //---------------------------Nhà xuất bản --------------------------------------
         public ActionResult List_NXB()
         {
             var listt = db.NhaXuatBans.ToList();
             return View(listt);
         }
+        public ActionResult Detail_NXB(string id)
+        {
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
+
+            NhaXuatBan nhaXuatBan = db.NhaXuatBans.SingleOrDefault(p => p.MaNXB == id);
+            if (nhaXuatBan == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(nhaXuatBan);
+        }
         public ActionResult Create_NXB()
         {
             return View();
         }
-
-        // POST: NhaXuatBan/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create_NXB(NXBModel model)
+        public ActionResult Create_NXB([Bind(Include = "MaNXB, TenNXB, DiaChi, DienThoai")] NhaXuatBan nhaXuatBan)
         {
             if (ModelState.IsValid)
             {
-                NhaXuatBan nhaXuatBan = new NhaXuatBan
+                // Kiểm tra xem MaNXB có đúng độ dài là 5 ký tự không
+                if (nhaXuatBan.MaNXB.Length != 5)
                 {
-                    MaNXB = model.MaNXB,
-                    TenNXB = model.TenNXB,
-                    DiaChi = model.DiaChi,
-                    DienThoai = model.DienThoai
-                };
+                    ModelState.AddModelError("MaNXB", "Mã NXB phải có độ dài là 5 ký tự.");
+                    return View(nhaXuatBan);
+                }
 
                 db.NhaXuatBans.InsertOnSubmit(nhaXuatBan);
                 db.SubmitChanges();
-                return RedirectToAction("List_NXB"); // Chuyển hướng đến một trang khác sau khi thêm thành công
+                return RedirectToAction("List_NXB");
             }
 
-            return View(model);
+            return View(nhaXuatBan);
         }
+
+        public ActionResult Edit_XNB(string id)
+        {
+            NhaXuatBan nhaXuatBan = db.NhaXuatBans.SingleOrDefault(p => p.MaNXB == id);
+            if (nhaXuatBan == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(nhaXuatBan);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit_NXB([Bind(Include = "MaNXB, TenNXB, DiaChi, DienThoai")] NhaXuatBan nhaXuatBan)
+        {
+            if (ModelState.IsValid)
+            {
+                var nhaXuatBanInDb = db.NhaXuatBans.SingleOrDefault(p => p.MaNXB == nhaXuatBan.MaNXB);
+                if (nhaXuatBanInDb != null)
+                {
+                    nhaXuatBanInDb.TenNXB = nhaXuatBan.TenNXB;
+                    nhaXuatBanInDb.DiaChi = nhaXuatBan.DiaChi;
+                    nhaXuatBanInDb.DienThoai = nhaXuatBan.DienThoai;
+                    db.SubmitChanges();
+                    return RedirectToAction("List_NXB");
+                }
+            }
+
+            return View(nhaXuatBan);
+        }
+        public ActionResult Delete_NXB(string id)
+        {
+            // Tìm tất cả các sách liên quan đến nhà xuất bản
+            var relatedBooks = db.Saches.Where(s => s.MaNXB == id).ToList();
+            var publisherToDelete = db.NhaXuatBans.FirstOrDefault(nxb => nxb.MaNXB == id);
+            if (publisherToDelete != null)
+            {
+                // Xóa tất cả các sách liên quan
+                foreach (var book in relatedBooks)
+                {
+                    db.Saches.DeleteOnSubmit(book);
+                }
+                // Xóa nhà xuất bản
+                db.NhaXuatBans.DeleteOnSubmit(publisherToDelete);
+                // Lưu thay đổi vào cơ sở dữ liệu
+                db.SubmitChanges();
+                return RedirectToAction("List_NXB"); // Chuyển hướng đến action List_NXB sau khi xóa thành công
+            }
+            else
+            {
+                return HttpNotFound(); // Trả về lỗi 404 Not Found nếu không tìm thấy nhà xuất bản để xóa
+            }
+        }
+
         //--------------------------Danh mục----------------------------
         public ActionResult List_DM()
         {
             var listt = db.DanhMucs.ToList();
             return View(listt);
         }
+        public ActionResult Detail_DM(string id)
+        {
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
+
+            DanhMuc danhMuc = db.DanhMucs.SingleOrDefault(p => p.MaDM == id);
+            if (danhMuc == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(danhMuc);
+        }
         public ActionResult Create_DM()
         {
             return View();
         }
-
-        // POST: DanhMuc/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create_DM(DMModel model)
+        public ActionResult Create_DM([Bind(Include = "MaDM, TenDM")] DanhMuc danhMuc)
         {
             if (ModelState.IsValid)
             {
-                DanhMuc danhMuc = new DanhMuc
+                // Kiểm tra xem MaNXB có đúng độ dài là 5 ký tự không
+                if (danhMuc.MaDM.Length != 4)
                 {
-                    MaDM = model.MaDM,
-                    TenDM = model.TenDM
-                };
+                    ModelState.AddModelError("MaDM", "Mã Danh mục phải có độ dài là 4 ký tự.");
+                    return View(danhMuc);
+                }
 
                 db.DanhMucs.InsertOnSubmit(danhMuc);
                 db.SubmitChanges();
-                return RedirectToAction("List_DM"); // Chuyển hướng đến một trang khác sau khi thêm thành công
+                return RedirectToAction("List_DM");
             }
 
-            return View(model);
+            return View(danhMuc);
+        }
+        public ActionResult Edit_DM(string id)
+        {
+            DanhMuc danhMuc = db.DanhMucs.SingleOrDefault(p => p.MaDM == id);
+            if (danhMuc == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(danhMuc);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit_DM([Bind(Include = "MaDM, TenDM")] DanhMuc danhMuc)
+        {
+            if (ModelState.IsValid)
+            {
+                var danhMucInDb = db.DanhMucs.SingleOrDefault(p => p.MaDM == danhMuc.MaDM);
+                if (danhMucInDb != null)
+                {
+                    danhMucInDb.TenDM = danhMuc.TenDM;
+                    db.SubmitChanges();
+                    return RedirectToAction("List_DM");
+                }
+            }
+
+            return View(danhMuc);
+        }
+        public ActionResult Delete_DM(string id)
+        {
+            // Tìm tất cả các sách liên quan đến nhà xuất bản
+            var relatedBooks = db.Saches.Where(s => s.MaDM == id).ToList();
+            var publisherToDelete = db.DanhMucs.FirstOrDefault(dm => dm.MaDM == id);
+            if (publisherToDelete != null)
+            {
+                // Xóa tất cả các sách liên quan
+                foreach (var book in relatedBooks)
+                {
+                    db.Saches.DeleteOnSubmit(book);
+                }
+                // Xóa nhà xuất bản
+                db.DanhMucs.DeleteOnSubmit(publisherToDelete);
+                // Lưu thay đổi vào cơ sở dữ liệu
+                db.SubmitChanges();
+                return RedirectToAction("List_DM"); // Chuyển hướng đến action List_NXB sau khi xóa thành công
+            }
+            else
+            {
+                return HttpNotFound(); // Trả về lỗi 404 Not Found nếu không tìm thấy nhà xuất bản để xóa
+            }
         }
         //--------------------------Khách hàng----------------------------
         [Authorize]
@@ -223,6 +475,52 @@ namespace QuanLyBanSach.Controllers
             db.AdminSaches.DeleteOnSubmit(Admin);
             db.SubmitChanges();
             return RedirectToAction("List_AD");
+        }
+        public ActionResult Create_AD()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create_AD([Bind(Include = "MaAD, TenAD, TaiKhoan, MatKhau")] AdminSach adminSach)
+        {
+            if(ModelState.IsValid)
+            {
+                db.AdminSaches.InsertOnSubmit(adminSach);
+                db.SubmitChanges();
+                return RedirectToAction("List_AD");
+            }
+
+            return View(adminSach);
+        }
+        public ActionResult Edit_AD(int id)
+        {
+            AdminSach adminSach = db.AdminSaches.SingleOrDefault(p => p.MaAD == id);
+            if (adminSach == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(adminSach);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit_AD([Bind(Include = "MaAD, TenAD, TaiKhoan, MatKhau")] AdminSach adminSach)
+        {
+            if (ModelState.IsValid)
+            {
+                var adminSachInDb = db.AdminSaches.SingleOrDefault(p => p.MaAD== adminSach.MaAD);
+                if (adminSachInDb != null)
+                {
+                    adminSachInDb.TenAD = adminSach.TenAD;
+                    adminSachInDb.TaiKhoan = adminSach.TaiKhoan;
+                    adminSachInDb.MatKhau = adminSach.MatKhau;
+                    db.SubmitChanges();
+                    return RedirectToAction("List_AD");
+                }
+            }
+
+            return View(adminSach);
         }
     }
 }

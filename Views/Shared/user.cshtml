@@ -46,11 +46,11 @@
             <div class="top-bar">
                 <div class="content-topbar flex-sb-m h-full container">
                     <div class="left-top-bar">
-                        Miễn phí vận chuyển cho đơn hàng trên 350,000đ
-                    </div>
+Giảm giá cho khách hàng mua trên app từ 3 triệu trở lên                        
+   </div>
 
                     <div class="right-top-bar flex-w h-full">
-                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        <a href="@Url.Action("LienHe","Home")" class="flex-c-m trans-04 p-lr-25">
                             Help & FAQs
                         </a>
 
@@ -77,7 +77,7 @@
                 <nav class="limiter-menu-desktop container">
 
                     <!-- Logo desktop -->
-                    <a href="#" class="logo">
+                    <a href="@Url.Action("Index","Home")" class="logo">
                         <img src="~/Content/User/images/icons/logo-01.png" alt="IMG-LOGO">
                     </a>
 
@@ -89,7 +89,7 @@
                             </li>
 
                             <li>
-                                <a href="@Url.Action("CuaHang","Home")">Cửa hàng</a>
+                                <a href="@Url.Action("CuaHang","Home")">Resort</a>
                             </li>
 
                             <li>
@@ -121,7 +121,7 @@
         <div class="header-cart flex-col-l p-l-65 p-r-25">
             <div class="header-cart-title flex-w flex-sb-m p-b-8">
                 <span class="mtext-103 cl2">
-                    Giỏ Hàng của bạn
+                    Resort đã đặt
                 </span>
 
                 <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
@@ -176,27 +176,27 @@
                     </h4>
 
                     <ul>
-                        <li class="p-b-10">
+                       @* <li class="p-b-10">
                             <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
                                 Chính sách đổi - trả - hoàn tiền
                             </a>
-                        </li>
+                        </li>*@
 
                         <li class="p-b-10">
-                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                           @* <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
                                 Chính sách bảo hành - bồi hoàn
                             </a>
                         </li>
-
+*@
                         <li class="p-b-10">
                             <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Chính sách vận chuyển
+                                Quyền lợi khách hàng
                             </a>
                         </li>
 
                         <li class="p-b-10">
                             <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                                Chính sách khách sỉ
+                                Dịch vụ đi kèm cho khách hàng đặt resort từ 3 sao trở lên
                             </a>
                         </li>
                         <li class="p-b-10">
@@ -233,7 +233,7 @@
 
                 <div class="col-sm-6 col-lg-3 p-b-50">
                     <h4 class="stext-301 cl0 p-b-30">
-                        Đăng ký nhận thông báo
+                        Đăng ký để nhận thông báo
                     </h4>
 
                     <form>

@@ -35,9 +35,9 @@
                             <td>@Html.DisplayFor(modelItem => item.DiaChi)</td>
                             <td>@Html.DisplayFor(modelItem => item.DienThoai)</td>
                             <td>
-                                <button onclick="window.location.href='@Url.Action("", new { id = item.MaNXB })'">Edit</button>
-                                <button onclick="window.location.href='@Url.Action("", new { id = item.MaNXB })'">Details</button>
-                                <button onclick="if(confirm('Bạn có chắc chắn muốn xóa không?')) { window.location.href='@Url.Action("", new { id = item.MaNXB })' }">Xóa</button>
+                                <button onclick="window.location.href='@Url.Action("Edit_XNB", "Admin", new { id = item.MaNXB })'">Edit</button>
+                                <button onclick="window.location.href='@Url.Action("Detail_NXB", "Admin", new { id = item.MaNXB })'">Details</button>
+                                <button onclick="if(confirm('Bạn có chắc chắn muốn xóa không?')) { window.location.href='@Url.Action("Delete_NXB", "Admin", new { id = item.MaNXB })' }">Xóa</button>
                             </td>
                         </tr>
 

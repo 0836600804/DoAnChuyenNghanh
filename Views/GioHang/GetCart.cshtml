@@ -31,11 +31,11 @@
 
             <div class="header-cart-buttons flex-w w-full">
                 <a href="@Url.Action("DatHang","GioHang")" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
-                    Đặt hàng
+                    Đặt resort
                 </a>
 
                 <a href="#" onclick="clearCart()" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
-                    Xoá giỏ hàng
+                    Xoá thông tin resort
                 </a>
             </div>
         </div>
@@ -43,7 +43,7 @@
     else
     {
         <span class="header-cart-item-info">
-            Bạn chưa có sản phẩm nào trong giỏ hàng
+            Bạn chưa có đặt resort nào 
         </span>
     }
 
@@ -57,20 +57,20 @@
             data: { id: productId },
             success: function () {
                 updateCart();
-                swal(tenSach, "Đã được thêm vào giỏ hàng!", "success");
+                swal(tenSach, "Đã được thêm vào danh sách!", "success");
             },
             error: function () {
-                alert("Có lỗi xảy ra khi xoá sản phẩm!");
+                alert("Có lỗi xảy ra khi xoá resort!");
             }
         });
     }
     function clearCart() {
         $.ajax({
-            url: '@Url.Action("XoaGioHangAll", "GioHang")', // Action method để xoá toàn bộ giỏ hàng
+            url: '@Url.Action("XoaGioHangAll", "GioHang")', // Action method để xoá toàn bộ danh sach
             type: 'POST',
             success: function (result) {
                 updateCart();
-                swal("","Bạn đã xoá hết sản phẩm trong giỏ hàng", "success");
+                swal("","Bạn đã xoá hết resort", "success");
             },
             error: function () {
                 alert("Có lỗi xảy ra khi xoá giỏ hàng!");

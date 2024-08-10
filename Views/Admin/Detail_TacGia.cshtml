@@ -1,0 +1,36 @@
+﻿@model QuanLyBanSach.Models.TacGia
+@{
+    ViewBag.Title = "Detail_TacGia";
+    Layout = "~/Views/Shared/admin.cshtml";
+}
+
+<h2>Detail TacGia</h2>
+
+<div>
+    <h4>TacGia</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.MaTG)</dt>
+        <dd>@Html.DisplayFor(model => model.MaTG)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.TenTG)</dt>
+        <dd>@Html.DisplayFor(model => model.TenTG)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.DienThoai)</dt>
+        <dd>@Html.DisplayFor(model => model.DienThoai)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.TieuSu)</dt>
+        <dd>@Html.DisplayFor(model => model.TieuSu)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.DiaChi)</dt>
+        <dd>@Html.DisplayFor(model => model.DiaChi)</dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit_TacGia", new { id = Model.MaTG }) |
+    @Html.ActionLink("Back to List", "List_TacGia")
+</p>
+
+<div>
+    @Html.ActionLink("Quay lại", "AdminIndex")
+</div>
